@@ -1,0 +1,26 @@
+/**
+* @fileDescription: {{fileDescription}}
+* @title: {{title}}
+* @date: {{date}}
+* @host: {{host}}
+* @basePath: {{basePath}}
+* @description: {{description}}
+* @version: {{version}}
+*/
+
+{{each funs item index}}
+/**
+ * @description 修改.
+ * 调用函数 api_{{fileName}}_{{item.fuName}}
+ {{if item.parameters.length}}{{each item.parameters v i}}* @param { {{v.type}} } {{v.description}} - {{v.required?'必填':''}}.{{/each}}{{/if}} 
+ */
+export function {{item.fuName}}(data, prop = {}) {
+  return useRequest({
+    data,
+    ...prop,
+    method: '{{item.type}}',
+    domain: 'account',
+    url: '{{item.url}}',
+    })
+}
+{{/each}}
