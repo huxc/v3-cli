@@ -25,7 +25,7 @@ export async function create(projectName, options) {
         removeSync(targetDirectory);
         downGit(targetDirectory);
       } else {
-        console.log("以退出！");
+        console.log("退出操作！");
         return;
       }
     }

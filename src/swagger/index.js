@@ -1,24 +1,25 @@
-import path from "path";
-import { fileURLToPath } from "url";
+import pc from "picocolors";
 import { renderFunc } from "./render.js";
+import { relativePath } from "../utils.js";
+import { input } from "@inquirer/prompts";
 
-export const defaultAction = async (args = []) => {
-  let [, , , filePath] = args;
-  // 如果用户填入配置文件的路径则走默认文件名 /v3.config.js
-  if (filePath) {
-    filePath = process.cwd() + "/" + filePath;
+// 读取配置文件
+export const defaultAction = async (swaggerUrl, cmd) => {
+  // swaggerUrl地址存在就不去读取配置文件
+  if (swaggerUrl) {
+    const swConfig = { entry: swaggerUrl };
+    if (!cmd.force) {
+      const answer = await input({ message: "请输入网关名称(domain的配置项)" });
+      swConfig.domain = answer;
+    }
+    renderFunc(swConfig);
   } else {
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const relativePath = path.relative(
-      __dirname,
-      process.cwd() + "/v3.config.js"
-    );
-    filePath = relativePath.replace(/\\/g, "/");
+    try {
+      const filePath = relativePath(import.meta.url, "/v3.config.js");
+      let swConfig = await import(filePath);
+      renderFunc(swConfig.default);
+    } catch (error) {
+      console.error(pc.red("😩 未找到配置文件：v3.config.js\r\n"));
+    }
   }
-  let swConfig = await import(filePath);
-  renderFunc(swConfig.default);
-};
-
-export const pathFunc = () => {
-  console.log("暂时不满足路径功能", process.cwd());
 };

@@ -1,6 +1,6 @@
 {
   "name": "v3admin-cli",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -24,6 +24,7 @@
     "cac": "^6.7.14",
     "dayjs": "^1.11.11",
     "download-git-repo": "^3.0.2",
+    "fast-glob": "^3.3.2",
     "figlet": "^1.7.0",
     "fs-extra": "^11.2.0",
     "lodash-es": "^4.17.21",

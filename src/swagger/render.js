@@ -4,23 +4,47 @@ import dayjs from "dayjs";
 import template from "art-template";
 import { camelCase, replace, mapKeys } from "lodash-es";
 import { outputFileSync, emptyDirSync } from "fs-extra/esm";
+import { t_header, t_content } from "./apiTmp.js";
 
 export async function renderFunc(swConfig) {
   const spinner = ora(" 文件生成中，请稍后...\r\n");
   spinner.start();
   const outputPath = swConfig?.output?.path
     ? swConfig.output.path
-    : process.cwd() + "/auto-api";
+    : process.cwd() + "/api/auto-api";
   let res = "";
   try {
     res = await Axios.default.get(swConfig.entry);
   } catch (e) {
-    spinner.succeed();
-    consoleError("Request failed", "entry must be the correct swagger-doc-api");
+    spinner.color = "red";
+    spinner.text = "请求失败! 请输入正确的swagger文档api地址";
+    spinner.fail();
     return;
   }
-  const data = res.data;
+  // 格式化模版所需要的数据
+  const artData = renderData(res.data, swConfig);
 
+  const artContent = swConfig.template || t_content;
+  const artTmp = t_header + artContent;
+
+  // 清空文件夹
+  emptyDirSync(outputPath);
+  // 创建文件
+  artData.forEach((item) => {
+    const apijs = template.render(artTmp, item);
+    outputFileSync(`${outputPath}/${item.fileName}.js`, apijs);
+  });
+
+  // 太快了 让慢一点^_^
+  setTimeout(() => {
+    spinner.color = "green";
+    spinner.text = `已生成！请查看${outputPath}目录下`;
+    spinner.succeed();
+  }, 3000);
+}
+
+//处理接口返回数据
+function renderData(data, swConfig) {
   const info = {
     fileDescription: data.info.description,
     title: data.info.title,
@@ -55,7 +79,9 @@ export async function renderFunc(swConfig) {
         description: rqsType.tags[0],
         parameters: rqsType.parameters || [],
       };
-
+      if (swConfig.domain) {
+        rqs.domain = swConfig.domain;
+      }
       paths[key].push(rqs);
     });
   });
@@ -69,16 +95,5 @@ export async function renderFunc(swConfig) {
     };
     artData.push(file);
   });
-  const cwd = process.cwd();
-  emptyDirSync(outputPath);
-  artData.forEach((item) => {
-    const apijs = template(`${cwd}/src/template/api.art`, item);
-    outputFileSync(`${outputPath}/${item.fileName}.js`, apijs);
-  });
-  // 太快了 想让慢一点
-  setTimeout(() => {
-    spinner.color = "green";
-    spinner.text = `已生成！请查看${outputPath}目录下`;
-    spinner.succeed();
-  }, 3000);
+  return artData;
 }
