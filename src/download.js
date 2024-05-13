@@ -4,11 +4,11 @@ import pc from "picocolors";
 import { confirm } from "@inquirer/prompts";
 import { execa } from "execa";
 
-export function downGit(path) {
+export function downGit(cwd) {
   const spinner = ora("创建中……\r\n").start();
   download(
     "direct:https://gitee.com/aron-ogawa/v3-admin-el.git",
-    path,
+    cwd,
     { clone: true },
     async (err) => {
       if (err) {
@@ -33,7 +33,7 @@ export function downGit(path) {
         }
       }
       if (isInstallPnpm) {
-        await execa({ stdout: ["pipe", "inherit"], cwd: path })`pnpm install`;
+        await execa({ stdout: ["pipe", "inherit"], cwd })`pnpm install`;
 
         spinner.color = "green";
         spinner.text = "😄安装依赖已完成";
@@ -43,7 +43,7 @@ export function downGit(path) {
         message: `是否在vscode中打开项目`,
       });
       if (isVscode) {
-        await execa({ cwd: path })`code .`;
+        await execa({ cwd })`code .`;
       }
     }
   );
