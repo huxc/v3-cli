@@ -6,7 +6,7 @@ import { createViews } from "./view/index.js";
 const cli = cac();
 
 cli.name = "v3-cli";
-cli.version("1.0.3");
+cli.version("1.0.5");
 cli.help();
 cli
   .command("create <project-name>", "创建一个v3-admin-el模版项目")
