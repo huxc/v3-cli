@@ -76,6 +76,7 @@ function renderData(data, swConfig) {
         url: pathKey,
         type: typeKey,
         fuName,
+        summary: rqsType.summary,
         description: rqsType.tags[0],
         parameters: rqsType.parameters || [],
       };

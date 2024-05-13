@@ -15,7 +15,7 @@ export async function create(projectName, options) {
     if (options.force) {
       // 删除重名目录
       removeSync(targetDirectory);
-      console.log(pc.green("存在同名目录，以强制删除！\r\n"));
+      console.log(pc.red("存在同名目录，以强制删除！\r\n"));
       downGit(targetDirectory);
     } else {
       const allowEmail = await confirm({

@@ -11,7 +11,7 @@ export const t_header = `/**
 export const t_content = `
 {{each funs item index}}
 /**
- * @description 修改.
+ * {{item.summary}}.
  * 调用函数 api_{{fileName}}_{{item.fuName}}{{each item.parameters v i}}
  * @param {{'{'+(v.type || 'object')+'}'}} {{v.description}}{{v.required?' - *必填':''}}.{{/each}}
 */
