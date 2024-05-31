@@ -3,9 +3,10 @@ import ora from "ora";
 import pc from "picocolors";
 import { confirm } from "@inquirer/prompts";
 import { execa } from "execa";
+import { outputFileSync,mkdirsSync,ensureDirSync,ensureFileSync } from "fs-extra/esm";
 
 export function downGit(cwd) {
-  const spinner = ora("创建中……\r\n").start();
+  const spinner = ora("正在创建项目…\r\n").start();
   download(
     "direct:https://gitee.com/aron-ogawa/v3-admin-el.git",
     cwd,
@@ -18,7 +19,7 @@ export function downGit(cwd) {
         return;
       } else {
         spinner.color = "green";
-        spinner.text = "创建完成！";
+        spinner.text = "创建项目已完成！";
         spinner.succeed();
       }
       const isPnpm = await confirm({ message: "是否使用 pnpm 初始化项目" });
@@ -33,11 +34,17 @@ export function downGit(cwd) {
         }
       }
       if (isInstallPnpm) {
+        await execa({ cwd })`git init`;
+        outputFileSync(`${cwd}/.eslintrc-auto-import.json`,`{"globals": {}}`)
         await execa({ stdout: ["pipe", "inherit"], cwd })`pnpm install`;
-
-        spinner.color = "green";
-        spinner.text = "😄安装依赖已完成";
-        spinner.succeed();
+        const spinner2 = ora("正在初始化eslint…\r\n").start();
+        try {
+            await execa({ cwd })`pnpm run lint`;
+        } catch (error) {
+        }
+        spinner2.color = "green";
+        spinner2.text = "😄 项目初始化已完成";
+        spinner2.succeed();
       }
       const isVscode = await confirm({
         message: `是否在vscode中打开项目`,
