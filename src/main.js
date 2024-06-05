@@ -1,12 +1,13 @@
 import { cac } from "cac";
 import { create } from "./create.js";
 import { defaultAction } from "./swagger/index.js";
-import { createViews } from "./view/index.js";
+import { createPage } from "./view/index.js";
+import { createViews } from "./view/fmt.js";
 
 const cli = cac();
 
 cli.name = "v3-cli";
-cli.version("1.0.5");
+cli.version("1.0.8");
 cli.help();
 cli
   .command("create <project-name>", "创建一个v3-admin-el模版项目")
@@ -26,9 +27,14 @@ cli
 
 cli
   .command("views", "根据router生成页面文件")
-  .alias("sg")
   .action(() => {
     createViews();
+  });
+
+  cli
+  .command("page", "")
+  .action(() => {
+    createPage();
   });
 
 try {
@@ -38,3 +44,4 @@ try {
   console.error(error.stack);
   process.exit(1);
 }
+

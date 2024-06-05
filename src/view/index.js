@@ -8,7 +8,7 @@ import ora from "ora";
 
 const cwd = process.cwd();
 
-export async function createViews() {
+export async function createPage() {
   const spinner = ora(" 文件生成中，请稍后...\r\n").start();
   // 读取配置文件
   try {
